@@ -7,7 +7,7 @@ on:
     branches:
       - trunk
 jobs:
-  tests:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -19,5 +19,4 @@ jobs:
         name: mycache
         # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - run: nix-shell
-    - run: make
+    - run: nix-shell --run "make"
