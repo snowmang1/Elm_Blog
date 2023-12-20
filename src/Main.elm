@@ -7,6 +7,12 @@ import Html.Attributes exposing (..)
 import Url
 import Url.Parser as Parse exposing (Parser, (</>), int, map, oneOf, s, string, parse)
 
+import NavBar exposing (nav)
+import Post exposing (post)
+import Style exposing (backStyle)
+import Footer exposing (footer)
+import About exposing (aboutPage)
+
 -- Main
 
 main : Program () Model Msg
@@ -24,7 +30,7 @@ main =
 
 type Route
   = Home
-  | Profile
+  | About
   | Unknown
 
 type alias Model =
@@ -36,8 +42,8 @@ type alias Model =
 routeParser : Parser (Route -> a) a
 routeParser =
   oneOf
-    [ Parse.map Home    (Parse.s "home")
-    , Parse.map Profile (Parse.s "profile")
+    [ Parse.map Home  (Parse.s "home")
+    , Parse.map About (Parse.s "about")
     ]
 
 findRoute : Parser (Route -> a) a -> Url.Url -> Route
@@ -45,9 +51,8 @@ findRoute p url =
   let temp = parse routeParser url in
       case temp of
         Just Home -> Home
-        Just Profile -> Profile
-        Just Unknown -> Unknown
-        Nothing -> Unknown
+        Just About -> About
+        _ -> Unknown
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
@@ -87,19 +92,29 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-  { title = "URL Interceptor"
+  { title = "Snowmang1 blog"
   , body =
-      [ text "The current URL is: "
-      , b [] [ text (Url.toString model.url) ]
-      , b [] [ text ("current path: " ++ (if model.route == Home then "\\home" else "\\else"))]
-      , ul []
-          [ viewLink "/home"
-          , viewLink "/profile"
+      case model.route of
+        Home ->
+          [ div
+            backStyle
+            [ NavBar.nav
+            , Post.post
+            ]
           ]
-      ]
-  }
 
--- Html msg is the return for html structures
-viewLink : String -> Html msg
-viewLink path =
-  li [] [ a [ href path ] [ text path ] ]
+        About ->
+          [ div
+            backStyle
+            [ NavBar.nav
+            , aboutPage
+            , Footer.footer
+            ]
+          ]
+
+        _ ->
+          [ div
+            backStyle
+            [ text "404 unkown path" ]
+          ]
+  }
