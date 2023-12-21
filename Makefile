@@ -4,4 +4,4 @@ all: src/Main.elm
 	elm make $< --output=deploy/Main.js
 
 clean:
-	@rm Main.js
+	@rm deploy/Main.js
