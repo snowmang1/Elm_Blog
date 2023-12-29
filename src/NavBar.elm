@@ -26,4 +26,9 @@ nav = Html.nav bar
       , style "color" "#94e2d5"
       , style "text-decoration" "none"
       ] [ text "Home" ]
+  , div [] []
+  , a [ href "\\posts"
+      , style "color" "#94e2d5"
+      , style "text-decoration" "none"
+      ] [ text "Posts" ]
   ]

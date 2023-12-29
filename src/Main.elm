@@ -8,8 +8,8 @@ import Url
 import Url.Parser as Parse exposing (Parser, (</>), int, map, oneOf, s, string, parse)
 
 import NavBar exposing (nav)
-import Post exposing (post)
-import Style exposing (backStyle)
+import PostTools exposing (post, allPosts)
+import Style exposing (backStyle, backDropStyle)
 import Footer exposing (footer)
 import About exposing (aboutPage)
 
@@ -31,6 +31,8 @@ main =
 type Route
   = Home
   | About
+  | Post String
+  | AllPosts
   | Unknown
 
 type alias Model =
@@ -44,6 +46,8 @@ routeParser =
   oneOf
     [ Parse.map Home  (Parse.s "home")
     , Parse.map About (Parse.s "about")
+    , Parse.map AllPosts (Parse.s "posts")
+    , Parse.map Post (Parse.s "post" </> string)
     ]
 
 findRoute : Parser (Route -> a) a -> Url.Url -> Route
@@ -52,6 +56,8 @@ findRoute p url =
       case temp of
         Just Home -> Home
         Just About -> About
+        Just (Post s) -> Post s
+        Just AllPosts -> AllPosts
         _ -> Unknown
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -78,7 +84,8 @@ update msg model =
     UrlChange url ->
       ( { key = model.key
         , url = url
-        , route = findRoute routeParser url }
+        , route = findRoute routeParser url 
+        }
       , Cmd.none
       )
 
@@ -96,15 +103,26 @@ view model =
   , body =
       case model.route of
         Home ->
-          [ div
+          [ div backDropStyle [],
+            div
             backStyle
             [ NavBar.nav
-            , Post.post
+            , PostTools.post "0"
+            ]
+          ]
+
+        Post s ->
+          [ div backDropStyle [],
+            div
+            backStyle
+            [ NavBar.nav
+            , PostTools.post s
             ]
           ]
 
         About ->
-          [ div
+          [ div backDropStyle [],
+            div
             backStyle
             [ NavBar.nav
             , aboutPage
@@ -112,9 +130,20 @@ view model =
             ]
           ]
 
+        AllPosts ->
+          [ div backDropStyle [],
+            div
+            backStyle
+            [ NavBar.nav
+            , allPosts
+            , Footer.footer
+            ]
+          ]
+
         _ ->
           [ div
             backStyle
-            [ text "404 unkown path" ]
+            [ div [style "color" "white" ]
+              [ text "404 unkown path" ] ]
           ]
   }
