@@ -1,4 +1,4 @@
-.PHONY: clean all
+.PHONY: clean all deploy
 
 all: src/Main.elm
 	elm make $< --output=deploy/Main.js
