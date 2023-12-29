@@ -1,0 +1,8 @@
+
+a:hover {
+	border-color: red
+}
+
+a:active {
+	border-color: blue;
+}
